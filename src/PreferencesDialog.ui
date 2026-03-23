@@ -1215,7 +1215,7 @@ in new project file</string>
             <item row="3" column="0">
              <widget class="QLabel" name="labelCellWordWrap">
               <property name="text">
-               <string>Disable word wrap in cell</string>
+               <string>Enable word wrap in cell</string>
               </property>
               <property name="buddy">
                <cstring>checkCellWordWrap</cstring>
@@ -1268,7 +1268,7 @@ Can be set to 0 for disabling completion.</string>
             <item row="3" column="1">
              <widget class="QCheckBox" name="checkCellWordWrap">
               <property name="toolTip">
-               <string>Enable this option to turn off word wrap in the cells.</string>
+               <string>Enable this option to turn on word wrap in the cells.</string>
               </property>
              </widget>
             </item>

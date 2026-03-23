@@ -304,7 +304,7 @@ QVariant Settings::getDefaultValue(const std::string& group, const std::string& 
         if(name == "image_preview")
             return false;
         if(name == "cell_word_wrap")
-            return false;
+            return true;
         if(name == "indent_compact")
             return false;
         if (name == "sort_keys")

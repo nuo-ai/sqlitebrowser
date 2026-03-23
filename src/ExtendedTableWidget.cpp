@@ -257,10 +257,7 @@ ExtendedTableWidget::ExtendedTableWidget(QWidget* parent) :
     m_frozen_column_count(0),
     m_item_border_delegate(new ItemBorderDelegate(this))
 {
-    // Fix behaviour for ElideMode
-    if(Settings::getValue("databrowser", "cell_word_wrap").toBool()) {
-        setWordWrap(false);
-    }
+    setWordWrap(Settings::getValue("databrowser", "cell_word_wrap").toBool());
 
     setHorizontalScrollMode(ExtendedTableWidget::ScrollPerPixel);
     // Force ScrollPerItem, so scrolling shows all table rows
@@ -517,9 +514,7 @@ void ExtendedTableWidget::reloadSettings()
     if(m_frozen_table_view)
         m_frozen_table_view->reloadSettings();
 
-    bool word_wrap = Settings::getValue("databrowser", "cell_word_wrap").toBool();
-    if(wordWrap() ^ word_wrap)
-        setWordWrap(word_wrap);
+    setWordWrap(Settings::getValue("databrowser", "cell_word_wrap").toBool());
 }
 
 bool ExtendedTableWidget::copyMimeData(const QModelIndexList& fromIndices, QMimeData* mimeData, const bool withHeaders, const bool inSQL)
