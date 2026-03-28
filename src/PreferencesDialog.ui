@@ -739,6 +739,29 @@ in new project file</string>
          <item row="5" column="1">
           <widget class="QSpinBox" name="spinStructureFontSize"/>
          </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="toolTip">
+            <string>When the database is open in readonly mode, watch the database file and refresh when it is updated.</string>
+           </property>
+           <property name="text">
+            <string>&amp;When readonly, refresh on changed file</string>
+           </property>
+           <property name="buddy">
+            <cstring>watcherCheckBox</cstring>
+           </property>
+          </widget>
+         </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="watcherCheckBox">
+         <property name="text">
+          <string>enabled</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
         </layout>
        </item>
        <item>
