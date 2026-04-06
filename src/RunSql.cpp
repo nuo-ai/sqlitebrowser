@@ -247,6 +247,7 @@ bool RunSql::executeNextStatement()
             break;
         }
         case SQLITE_MISUSE:
+            error = QString::fromUtf8(sqlite3_errmsg(pDb.get()));
             break;
         default:
             error = QString::fromUtf8(sqlite3_errmsg(pDb.get()));
