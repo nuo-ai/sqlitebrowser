@@ -99,6 +99,7 @@ void PreferencesDialog::loadSettings()
     }
 
     ui->spinStructureFontSize->setValue(Settings::getValue("db", "fontsize").toInt());
+    ui->watcherCheckBox->setChecked(Settings::getValue("db", "watcher").toBool());
 
     // Gracefully handle the preferred Data Browser font not being available
     int matchingFont = ui->comboDataBrowserFont->findText(Settings::getValue("databrowser", "font").toString(), Qt::MatchExactly);
@@ -119,6 +120,7 @@ void PreferencesDialog::loadSettings()
     ui->spinSymbolLimit->setValue(Settings::getValue("databrowser", "symbol_limit").toInt());
     ui->spinCompleteThreshold->setValue(Settings::getValue("databrowser", "complete_threshold").toInt());
     ui->checkShowImagesInline->setChecked(Settings::getValue("databrowser", "image_preview").toBool());
+    ui->checkCellWordWrap->setChecked(Settings::getValue("databrowser", "cell_word_wrap").toBool());
     ui->txtNull->setText(Settings::getValue("databrowser", "null_text").toString());
     ui->txtBlob->setText(Settings::getValue("databrowser", "blob_text").toString());
     ui->editFilterEscape->setText(Settings::getValue("databrowser", "filter_escape").toString());
@@ -196,12 +198,14 @@ void PreferencesDialog::saveSettings(bool accept)
     Settings::setValue("db", "defaultsqltext", ui->editDatabaseDefaultSqlText->text());
     Settings::setValue("db", "defaultfieldtype", ui->defaultFieldTypeComboBox->currentIndex());
     Settings::setValue("db", "fontsize", ui->spinStructureFontSize->value());
+    Settings::setValue("db", "watcher", ui->watcherCheckBox->isChecked());
 
     Settings::setValue("checkversion", "enabled", ui->checkUpdates->isChecked());
 
     Settings::setValue("databrowser", "font", ui->comboDataBrowserFont->currentText());
     Settings::setValue("databrowser", "fontsize", ui->spinDataBrowserFontSize->value());
     Settings::setValue("databrowser", "image_preview", ui->checkShowImagesInline->isChecked());
+    Settings::setValue("databrowser", "cell_word_wrap", ui->checkCellWordWrap->isChecked());
     saveColorSetting(ui->fr_null_fg, "null_fg");
     saveColorSetting(ui->fr_null_bg, "null_bg");
     saveColorSetting(ui->fr_reg_fg, "reg_fg");

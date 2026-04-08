@@ -583,7 +583,11 @@ bool MainWindow::fileOpen(const QString& fileName, bool openFromProject, bool re
                     loadPragmas();
 
                 refreshTableBrowsers();
-
+                if (db.readOnly()) {
+                    if (!fileSystemWatch.files().isEmpty())
+                        fileSystemWatch.removePaths(fileSystemWatch.files());
+                    fileSystemWatch.addPath(wFile);
+                }
                 retval = true;
             } else {
                 QMessageBox::warning(this, qApp->applicationName(), tr("Could not open database file.\nReason: %1").arg(db.lastError()));
@@ -700,6 +704,10 @@ void MainWindow::refreshTableBrowsers(bool all)
     QApplication::restoreOverrideCursor();
 }
 
+void MainWindow::refreshDb() {
+    refreshTableBrowsers();
+}
+
 bool MainWindow::fileSaveAs() {
 
     QString fileName =  FileDialog::getSaveFileName(
@@ -743,6 +751,8 @@ bool MainWindow::fileClose()
     if(!db.close())
         return false;
 
+    if (!fileSystemWatch.files().isEmpty())
+        fileSystemWatch.removePaths(fileSystemWatch.files());
     TableBrowser::resetSharedSettings();
     setCurrentFile(QString());
     loadPragmas();
@@ -2462,6 +2472,14 @@ void MainWindow::reloadSettings()
 
     ui->actionDropQualifiedCheck->setChecked(Settings::getValue("SchemaDock", "dropQualifiedNames").toBool());
     ui->actionEnquoteNamesCheck->setChecked(Settings::getValue("SchemaDock", "dropEnquotedNames").toBool());
+
+    if (Settings::getValue("db", "watcher").toBool())
+        connect(&fileSystemWatch, &QFileSystemWatcher::fileChanged, this, &MainWindow::refreshDb, Qt::UniqueConnection);
+    else {
+        disconnect(&fileSystemWatch, &QFileSystemWatcher::fileChanged, nullptr, nullptr);
+        if (!fileSystemWatch.files().isEmpty())
+            fileSystemWatch.removePaths(fileSystemWatch.files());
+    }
 }
 
 void MainWindow::checkNewVersion(const bool automatic)

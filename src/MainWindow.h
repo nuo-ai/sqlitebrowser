@@ -6,7 +6,9 @@
 
 #include <memory>
 #include <vector>
+
 #include <QMainWindow>
+#include <QFileSystemWatcher>
 
 struct BrowseDataTableSettings;
 class DbStructureModel;
@@ -121,6 +123,8 @@ private:
     QString currentProjectFilename;
     bool isProjectModified;
 
+    QFileSystemWatcher fileSystemWatch;
+
     void init();
     void clearCompleterModelsFields();
 
@@ -176,6 +180,7 @@ private slots:
     void fileNewInMemoryDatabase(bool open_create_dialog = true);
     // Refresh visible table browsers. When all is true, refresh all browsers.
     void refreshTableBrowsers(bool all = false);
+    void refreshDb();
     bool fileClose();
     bool fileSaveAs();
     void createTable();

@@ -159,6 +159,10 @@ QVariant Settings::getDefaultValue(const std::string& group, const std::string& 
     if(group == "db" && name == "fontsize")
         return 10;
 
+    // db/watcher?
+    if(group == "db" && name == "watcher")
+        return false;
+
     // exportcsv/firstrowheader?
     if(group == "exportcsv" && name == "firstrowheader")
         return true;
@@ -303,6 +307,8 @@ QVariant Settings::getDefaultValue(const std::string& group, const std::string& 
             return 1000;
         if(name == "image_preview")
             return false;
+        if(name == "cell_word_wrap")
+            return true;
         if(name == "indent_compact")
             return false;
         if (name == "sort_keys")

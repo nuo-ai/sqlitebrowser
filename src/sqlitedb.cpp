@@ -25,6 +25,32 @@
 #include <cstring>
 #include <functional>
 
+namespace {
+
+bool equalsIgnoreCase(const std::string& lhs, const std::string& rhs)
+{
+    if(lhs.size() != rhs.size())
+        return false;
+
+    return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](unsigned char a, unsigned char b) {
+        return std::tolower(a) == std::tolower(b);
+    });
+}
+
+template<typename MapType>
+typename MapType::const_iterator findCaseInsensitive(const MapType& map, const std::string& key)
+{
+    auto it = map.find(key);
+    if(it != map.end())
+        return it;
+
+    return std::find_if(map.begin(), map.end(), [&key](const auto& entry) {
+        return equalsIgnoreCase(entry.first, key);
+    });
+}
+
+}
+
 const QStringList DBBrowserDB::journalModeValues = {"DELETE", "TRUNCATE", "PERSIST", "MEMORY", "WAL", "OFF"};
 const QStringList DBBrowserDB::lockingModeValues = {"NORMAL", "EXCLUSIVE"};
 
@@ -2223,6 +2249,66 @@ std::vector<std::pair<std::string, std::string>> DBBrowserDB::queryColumnInforma
     }
 
     return result;
+}
+
+const sqlb::TablePtr DBBrowserDB::getTableByName(const sqlb::ObjectIdentifier& name) const
+{
+    if(schemata.empty() || name.schema().empty() || name.name().empty())
+        return sqlb::TablePtr{};
+
+    const auto schemaIt = findCaseInsensitive(schemata, name.schema());
+    if(schemaIt == schemata.end())
+        return sqlb::TablePtr{};
+
+    const auto& tables = schemaIt->second.tables;
+    if(tables.empty())
+        return sqlb::TablePtr{};
+
+    const auto tableIt = findCaseInsensitive(tables, name.name());
+    if(tableIt == tables.end())
+        return sqlb::TablePtr{};
+
+    return tableIt->second;
+}
+
+const sqlb::IndexPtr DBBrowserDB::getIndexByName(const sqlb::ObjectIdentifier& name) const
+{
+    if(schemata.empty() || name.schema().empty() || name.name().empty())
+        return sqlb::IndexPtr{};
+
+    const auto schemaIt = findCaseInsensitive(schemata, name.schema());
+    if(schemaIt == schemata.end())
+        return sqlb::IndexPtr{};
+
+    const auto& indices = schemaIt->second.indices;
+    if(indices.empty())
+        return sqlb::IndexPtr{};
+
+    const auto indexIt = findCaseInsensitive(indices, name.name());
+    if(indexIt == indices.end())
+        return sqlb::IndexPtr{};
+
+    return indexIt->second;
+}
+
+const sqlb::TriggerPtr DBBrowserDB::getTriggerByName(const sqlb::ObjectIdentifier& name) const
+{
+    if(schemata.empty() || name.schema().empty() || name.name().empty())
+        return sqlb::TriggerPtr{};
+
+    const auto schemaIt = findCaseInsensitive(schemata, name.schema());
+    if(schemaIt == schemata.end())
+        return sqlb::TriggerPtr{};
+
+    const auto& triggers = schemaIt->second.triggers;
+    if(triggers.empty())
+        return sqlb::TriggerPtr{};
+
+    const auto triggerIt = findCaseInsensitive(triggers, name.name());
+    if(triggerIt == triggers.end())
+        return sqlb::TriggerPtr{};
+
+    return triggerIt->second;
 }
 
 std::string DBBrowserDB::generateSavepointName(const std::string& identifier) const
