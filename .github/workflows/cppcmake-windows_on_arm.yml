@@ -29,8 +29,8 @@ jobs:
               run: |
                 choco install --no-progress ninja wixtoolset
                 
-                Invoke-WebRequest -Uri "https://slproweb.com/download/WinUniversalOpenSSL-3_6_1.exe" -OutFile WinUniversalOpenSSL-3_6_1.exe
-                Start-Process -FilePath .\WinUniversalOpenSSL-3_6_1.exe -ArgumentList '/ALLUSERS /verysilent /dir="C:\dev\OpenSSL"' -Wait
+                Invoke-WebRequest -Uri "https://slproweb.com/download/WinUniversalOpenSSL-3_6_2.exe" -OutFile WinUniversalOpenSSL-3_6_2.exe
+                Start-Process -FilePath .\WinUniversalOpenSSL-3_6_2.exe -ArgumentList '/ALLUSERS /verysilent /dir="C:\dev\OpenSSL"' -Wait
 
             - name: Install Qt
               uses: jurplel/install-qt-action@v4
