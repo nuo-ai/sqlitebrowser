@@ -1245,7 +1245,8 @@ void MainWindow::executeQuery()
         if (char_at_index == '\r' || char_at_index == '\n') {
             execute_from_line++;
             // The next lines could be empty, so skip all of them too.
-            while(editor->text(execute_from_line).trimmed().isEmpty())
+            while(execute_from_line <= editor->lines() &&
+                    editor->text(execute_from_line).trimmed().isEmpty())
                 execute_from_line++;
             execute_from_index = 0;
         }
@@ -1326,7 +1327,11 @@ void MainWindow::executeQuery()
 
             auto time_end = std::chrono::high_resolution_clock::now();
             auto time_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(time_end-time_start);
-            query_logger(true, tr("%1 rows returned in %2ms").arg(model->rowCount()).arg(time_in_ms.count()+time_in_ms_so_far), from_position, to_position);
+            if (model->hasError()) {
+                query_logger(false, model->lastError(), from_position, to_position);
+            } else {
+                query_logger(true, tr("%1 rows returned in %2ms").arg(model->rowCount()).arg(time_in_ms.count()+time_in_ms_so_far), from_position, to_position);
+            }
             execute_sql_worker->startNextStatement();
         });
     }, Qt::QueuedConnection);
