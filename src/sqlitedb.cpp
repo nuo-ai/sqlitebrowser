@@ -1236,30 +1236,31 @@ bool DBBrowserDB::executeMultiSQL(QByteArray query, bool dirty, bool log)
         // Execute next statement
         if(sqlite3_prepare_v2(_db, tail, static_cast<int>(tail_end - tail + 1), &vm, &tail) == SQLITE_OK)
         {
-            switch(sqlite3_step(vm))
+            if(vm)
             {
-            case SQLITE_OK:
-            case SQLITE_ROW:
-            case SQLITE_DONE:
-            case SQLITE_MISUSE:             // This is a workaround around problematic user scripts. If they lead to empty commands,
-                                            // SQLite will return a misuse error which we hereby ignore.
-                sqlite3_finalize(vm);
-                break;
-            default:
-                // In case of *any* error abort the execution and roll back the transaction
+                switch(sqlite3_step(vm))
+                {
+                case SQLITE_OK:
+                case SQLITE_ROW:
+                case SQLITE_DONE:
+                    sqlite3_finalize(vm);
+                    break;
+                default:
+                    // In case of *any* error abort the execution and roll back the transaction
 
-                // Make sure to save the error message first before any other function can mess around with it
-                lastErrorMessage = tr("Error in statement #%1: %2.\nAborting execution%3.").arg(
-                        QString::number(line),
-                        sqlite3_errmsg(_db),
-                        dirty ? tr(" and rolling back") : "");
-                qWarning() << lastErrorMessage;
+                    // Make sure to save the error message first before any other function can mess around with it
+                    lastErrorMessage = tr("Error in statement #%1: %2.\nAborting execution%3.").arg(
+                            QString::number(line),
+                            sqlite3_errmsg(_db),
+                            dirty ? tr(" and rolling back") : "");
+                    qWarning() << lastErrorMessage;
 
-                // Clean up
-                sqlite3_finalize(vm);
-                if(dirty)
-                    revertToSavepoint(savepoint_name);
-                return false;
+                    // Clean up
+                    sqlite3_finalize(vm);
+                    if(dirty)
+                        revertToSavepoint(savepoint_name);
+                    return false;
+                }
             }
         } else {
             lastErrorMessage = tr("Error in statement #%1: %2.\nAborting execution%3.").arg(
